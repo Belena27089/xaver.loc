@@ -64,7 +64,7 @@ $time4 = mt_rand((int) $date1, (int) $date2) . "\n";
 $time5 = mt_rand((int) $date1, (int) $date2) . "\n" . "<br>";
 
 $date = array($time1, $time2, $time3, $time4, $time5);
-var_dump($date);
+//var_dump($date);
 $mes1 = strftime("%m - %B", (int) $time1) . "\n";
 $mes2 = strftime("%m - %B ", (int) $time2) . "\n";
 $mes3 = strftime("%m - %B", (int) $time3) . "\n";
@@ -73,7 +73,7 @@ $mes5 = strftime("%m - %B", (int) $time5) . "\n";
 
 $mes = array($mes1, $mes2, $mes3, $mes4, $mes5);
 
-var_dump($mes);
+//var_dump($mes);
 
 echo 'Наибольший месяц в массиве:' . max($mes);
 
