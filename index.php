@@ -122,7 +122,7 @@ echo '<h3>В корзину добавлено:</h3>';
 function sum($lot, $cost, $count) {
     if ($lot > $count) {
         return $count * $cost;
-        ;
+        
     } else {
         return $lot * $cost;
     }
