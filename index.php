@@ -1,4 +1,5 @@
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -78,17 +79,13 @@ If ($lot[2] >= 3) {
     $cost[2];
 }
 
-//Функция расчёта 10% скидки 
-
-function diskonter1($cost) {
-
-    return $cost - (10 / 100 * $cost);
-}
-
-//Функция расчёта 20% скидки
-function diskonter2($cost) {
-
-    return $cost - (20 / 100 * $cost);
+//Функция расчёта  скидки 
+function diskonter($cost) {
+    if ($diskont = 1){
+        return $cost - (10 / 100 * $cost);
+    } elseif($diskont = 2) {
+        return $cost - (20 / 100 * $cost);   
+    }
 }
 
 //Функция, выводящая уведомление о недостаточном количестве товара
@@ -104,10 +101,10 @@ echo '<h3>Скидки</h3>';
 for ($i = 0; $i < count($diskont); $i++) {
     switch ($diskont[$i]) {
         case 2:
-            echo 'Ваша цена на ' . $ar[$i] . ' с 20% скидкой составила:' . $cost[$i] = diskonter2($cost[$i]) . ' руб.<br>';
+            echo 'Ваша цена на ' . $ar[$i] . ' с 20% скидкой составила:' . $cost[$i] = diskonter($cost[$i]) . ' руб.<br>';
             break;
         case 1:
-            echo 'Ваша цена на ' . $ar[$i] . ' с 10% скидкой составила:' . $cost[$i] = diskonter1($cost[$i]) . ' руб.<br>';
+            echo 'Ваша цена на ' . $ar[$i] . ' с 10% скидкой составила:' . $cost[$i] = diskonter($cost[$i]) . ' руб.<br>';
             break;
 
         default:
@@ -155,6 +152,3 @@ echo 'Наименований товаров заказано: ' . count($sumAr
  . 'Количество единиц: ' . array_sum($lots) . ' шт.<br>'
  . 'Общая сумма заказа: ' . array_sum($sum) . 'руб.<br>';
 ?>
-
-
-
