@@ -1,64 +1,85 @@
 <?php
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
 $ini_string = '
-[игрушка мягкая мишка белый]
+[игрушка мягкая "Мишка белый":]
 цена = ' . mt_rand(1, 10) . '
 количество заказано = ' . mt_rand(1, 10) . '
 осталось на складе = ' . mt_rand(0, 10) . '
-diskont = diskont' . mt_rand(0, 2) . '
+diskont = ' . mt_rand(0, 2) . '
         
-[одежда детская куртка синяя синтепон]
+[одежда детская "Куртка синяя (синтепон)":]
 цена = ' . mt_rand(1, 10) . '
 количество заказано = ' . mt_rand(1, 10) . '
 осталось на складе = ' . mt_rand(0, 10) . '
 осталось на складе = ' . mt_rand(0, 10) . '
-diskont = diskont' . mt_rand(0, 2) . '
+diskont = ' . mt_rand(0, 2) . '
     
-[игрушка детская велосипед]
+[игрушка детская "Велосипед":]
 цена = ' . mt_rand(1, 10) . '
 количество заказано = ' . mt_rand(1, 10) . '
 осталось на складе = ' . mt_rand(0, 10) . '
-diskont = diskont' . mt_rand(0, 2);
+diskont = ' . mt_rand(0, 2);
 
 $bd = parse_ini_string($ini_string, true);
-print_r($bd);
 
-$lot1 = $bd['игрушка мягкая мишка белый']['количество заказано'];
-$lot2 = $bd['одежда детская куртка синяя синтепон']['количество заказано'];
-$lot3 = $bd['игрушка детская велосипед']['количество заказано'];
-$cost1 = $bd['игрушка мягкая мишка белый']['цена'];
-$cost2 = $bd['одежда детская куртка синяя синтепон']['цена'];
-$cost3 = $bd['игрушка детская велосипед']['цена'];
-$diskont1 = $bd['игрушка мягкая мишка белый']['diskont'];
-$diskont2 = $bd['одежда детская куртка синяя синтепон']['diskont'];
-$diskont3 = $bd['игрушка детская велосипед']['diskont'];
-$count1 = $bd['игрушка мягкая мишка белый']['осталось на складе'];
-$count2 = $bd['одежда детская куртка синяя синтепон']['осталось на складе'];
-$count3 = $bd['игрушка детская велосипед']['осталось на складе'];
 
-//Функция вывода количества положенного в корзину товара в зависимости от наличия на складе
-function sLots($lot, $count) {
-    return $lots = ($lot > $count) ? $count : $lot;
+foreach ($bd as $article => $items) {
+    echo "<h3>$article</h3>";
+    echo "<ul>";
+    foreach ($items as $key => $value) {
+        echo "<li> $key =>$value</li>";
+    }
+    echo "</ul>";
 }
 
-$sLots1 = sLots($lot1, $count1) . '<br>';
-$sLots2 = sLots($lot2, $count2) . '<br>';
-$sLots3 = sLots($lot3, $count3) . '<br>';
-$sumLot = $sLots1 + $sLots2 + $sLots3; //Общее количество положенных в корзину товаров
+$ar = array(); //массив артиклей
+foreach ($bd as $article => $items) {
+
+    $ar[] = $article;
+}
+
+$lot = array();
+foreach ($bd as $article => $items) {
+    $lot[] = $items['количество заказано'];
+}
+
+$cost = array();
+foreach ($bd as $article => $items) {
+    $cost[] = $items['цена'];
+}
+
+$diskont = array();
+foreach ($bd as $article => $items) {
+    $diskont[] = $items['diskont'];
+}
+
+$count = array();
+foreach ($bd as $article => $items) {
+    $count[] = $items['осталось на складе'];
+}
+
+
+$lots = array(); //Общее количество положенных в корзину товаров в зависимости от наличия на складе
+
+for ($i = 0; $i < count($count); $i++) {
+    $lots[] = ($lot[$i] < $count[$i]) ? $lot[$i] : $count[$i];
+}
+
+
 //Расчёт дополнительной 30% скидки на велосипеды при покупке от 3 шт
-If ($lot3 >= 3) {
-    $diskontBike = 30 / 100 * $cost3;
-    $cost3 = $cost3 - $diskontBike . '<br>';
+If ($lot[2] >= 3) {
+    $diskontBike = 30 / 100 * $cost[2];
+    $cost[2] = $cost[2] - $diskontBike . '<br>';
 } else {
     $diskontBike = 0;
-    $cost3;
+    $cost[2];
 }
 
-//Функция расчёта 10% скидки
+//Функция расчёта 10% скидки 
+
 function diskonter1($cost) {
 
     return $cost - (10 / 100 * $cost);
@@ -66,6 +87,7 @@ function diskonter1($cost) {
 
 //Функция расчёта 20% скидки
 function diskonter2($cost) {
+
     return $cost - (20 / 100 * $cost);
 }
 
@@ -76,77 +98,63 @@ function notification($lot, $count) {
 
 echo '<h1>КОРЗИНА ПОКУПАТЕЛЯ</h1>';
 echo '<h3>Скидки</h3>';
-switch ($diskont1) {
-    case 'diskont2' :
-        echo 'Ваша цена на мишку с 20% скидкой составила:' . $cost1 = diskonter2($cost1) . ' руб.<br>';
-        break;
-    case 'diskont1' :
-        echo 'Ваша цена на мишку с 10% скидкой составила:' . $cost1 = diskonter1($cost1) . ' руб.<br>';
-        break;
 
-    default:
-        echo 'Скидки на мишку нет<br>';
-        break;
-}
-switch ($diskont2) {
-    case 'diskont2' :
-        echo 'Ваша цена на куртку с 20% скидкой составила:' . $cost2 = diskonter2($cost2) . ' руб.<br>';
-        break;
-    case 'diskont1' :
-        echo 'Ваша цена на куртку с 10% скидкой составила:' . $cost2 = diskonter1($cost2) . ' руб.<br>';
-        break;
 
-    default:
-        echo 'Скидки на куртку нет<br>';
-        break;
-}
-switch ($diskont3) {
-    case 'diskont2' :
-        echo 'Ваша цена на велосипед с 20% скидкой составила:' . $cost3 = diskonter2($cost3) . ' руб.<br>';
-        break;
-    case 'diskont1' :
-        echo 'Ваша цена на велосипед с 10% скидкой составила:' . $cost3 = diskonter1($cost3) . ' руб.<br>';
-        break;
+//вывод скидки
+for ($i = 0; $i < count($diskont); $i++) {
+    switch ($diskont[$i]) {
+        case 2:
+            echo 'Ваша цена на ' . $ar[$i] . ' с 20% скидкой составила:' . $cost[$i] = diskonter2($cost[$i]) . ' руб.<br>';
+            break;
+        case 1:
+            echo 'Ваша цена на ' . $ar[$i] . ' с 10% скидкой составила:' . $cost[$i] = diskonter1($cost[$i]) . ' руб.<br>';
+            break;
 
-    default:
-        echo 'Скидки на велосипед нет<br>';
-        break;
+        default:
+            echo 'Скидки на ' . $ar[$i] . ' нет<br>';
+            break;
+    }
 }
+
+
 echo 'Если количество велосипедов равно или больше 3 шт. , вы получаете '
  . 'дополнительно скидку на каждый велосипед 30%<br>'
  . 'Ваша скидка составила: ' . $diskontBike . 'руб.<br>';
 echo '<h3>В корзину добавлено:</h3>';
 
-//Функция расчёта суммы к оплате за позицию товара
-function sum($lot, $cost, $count) {
-    if ($lot > $count) {
-        return $count * $cost;
-        
+
+$sum = array(); //суммы к оплате за позицию товара
+for ($i = 0; $i < count($count); $i++) {
+    if ($lot[$i] > $count[$i]) {
+        $sum[] = $count[$i] * $cost[$i];
     } else {
-        return $lot * $cost;
+        $sum[] = $lot[$i] * $cost[$i];
     }
 }
 
-$sum1 = sum($lot1, $cost1, $count1);
-$sum2 = sum($lot2, $cost2, $count2);
-$sum3 = sum($lot3, $cost3, $count3);
-$total = $sum1 + $sum2 + $sum3; //Итоговая сумма к оплате за весь товар в корзине
+for ($i = 0; $i < count($ar); $i++) {
+    echo $ar[$i] . $lot[$i] . ' шт. '
+    . ' по цене ' . $cost[$i] . 'p/шт.<br> '
+    . 'Остаток на складе: ' . $count[$i] . ' шт.<br>' . notification($lot[$i], $count[$i]) .
+    'Сумма по позиции: ' . $sum[$i] . 'руб.<br><br>';
+}
 
-echo 'Игрушка мягкая: "Мишка белый" ' . $lot1 . ' шт. '
- . ' по цене ' . $cost1 . 'p/шт.<br> '
- . 'Остаток на складе: ' . $count1 . ' шт.<br>' . notification($lot1, $count1) .
- 'Сумма по позиции: ' . $sum1 . 'руб.<br>';
-echo 'Oдежда детская: "Куртка синяя (синтепон)" ' . $lot2 . ' шт. '
- . ' по цене ' . $cost2 . 'p/шт.<br>'
- . ' Остаток на складе: ' . $count2 . ' шт.<br>' . notification($lot2, $count2) .
- 'Сумма по позиции: ' . $sum2 . 'руб.<br>';
-echo 'Игрушка детская: "Bелосипед" ' . $lot3 . ' шт. '
- . ' по цене ' . $cost3 . 'p/шт.<br>'
- . ' Остаток на складе: ' . $count3 . ' шт.<br>' . notification($lot3, $count3) .
- 'Сумма по позиции: ' . $sum3 . 'руб.<br>';
+$sumAr = array(); //массив артиклей положенных в корзину
+for ($i = 0; $i < count($ar); $i++) {
+    if ($lots[$i] != 0) {
+        $sumAr[] = $ar[$i];
+    } else {
+        $sumAr[] = 0;
+        unset($sumAr[$i]);
+    }
+}
+//print_r($sumAr);
 
 echo '<h2>Итого:</h2>';
-echo 'Наименований товаров заказано: ' . count($bd) . ';<br>'
- . 'Количество единиц: ' . $sumLot . ' шт.<br>'
- . 'Общая сумма заказа: ' . $total . 'руб.<br>';
+echo 'Наименований товаров заказано: ' . count($sumAr) . ';<br>'
+ . 'Количество единиц: ' . array_sum($lots) . ' шт.<br>'
+ . 'Общая сумма заказа: ' . array_sum($sum) . 'руб.<br>';
 ?>
+
+
+
