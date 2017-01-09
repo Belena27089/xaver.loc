@@ -34,47 +34,24 @@ foreach ($bd as $article => $items) {
         echo "<li> $key =>$value</li>";
     }
     echo "</ul>";
+    $ar[] = $article;//массив артиклей
+    $lot[] = $items['количество заказано'];//массив количества заказанных товаров
+    $cost[] = $items['цена'];//массив цен на товары
+    $diskont[] = $items['diskont'];//массив дисконта на товар
+    $count[] = $items['осталось на складе'];//массив остатка на складе
 }
 
-$ar = array(); //массив артиклей
-foreach ($bd as $article => $items) {
-
-    $ar[] = $article;
-}
-
-$lot = array();
-foreach ($bd as $article => $items) {
-    $lot[] = $items['количество заказано'];
-}
-
-$cost = array();
-foreach ($bd as $article => $items) {
-    $cost[] = $items['цена'];
-}
-
-$diskont = array();
-foreach ($bd as $article => $items) {
-    $diskont[] = $items['diskont'];
-}
-
-$count = array();
-foreach ($bd as $article => $items) {
-    $count[] = $items['осталось на складе'];
-}
-
-
-$lots = array(); //Общее количество положенных в корзину товаров в зависимости от наличия на складе
+ //массив  количества положенных в корзину товаров в зависимости от наличия на складе
 
 for ($i = 0; $i < count($count); $i++) {
     $lots[] = ($lot[$i] < $count[$i]) ? $lot[$i] : $count[$i];
 }
 
-
 //расчёт дополнительной 30% скидки на велосипеды при покупке от 3 шт
 
 $think = 3; //количество шт. товара задающее скидку
-//функция рвсчёта 30% скидки в зависимости от количества товара
 
+//функция рвсчёта 30% скидки в зависимостищ от количества товара
 function diskontThirty($lots, $cost) {
     global $think;
     If ($lots >= $think) {
@@ -84,60 +61,80 @@ function diskontThirty($lots, $cost) {
     }
 }
 
-//функция расчёта цены с 30% скидкой от 3 шт
+//функция расчёта цены с 30% скидкой в зависимостищ от количества товара 
 function diskontLot($lots, $cost, $diskontThirty) {
     global $think;
     If ($lots >= $think) {
-
         return $cost = $cost - $diskontThirty . '<br>';
     } else {
 
         return $cost;
     }
 }
+//функция расчёта дополнительной скидки 30% для велосипеда
+$art3 =$ar[2];//'игрушка детская "Велосипед":'
+$disbike =diskontThirty($lots[2], $cost[2]);//скидка 30% для велосипеда
+function discontBike($ar){
+    global $disbike;
+    global $art3; 
+    if($ar==$art3 ){
+        return 'Если количество велосипедов равно или больше 3 шт. , вы получаете '
+. 'дополнительно скидку на каждый велосипед 30%<br>' . 'Ваша скидка составила: ' . $disbike . 'руб.<br>';
+
+} else {
+    return ''; 
+}
+}
 
 //Функция расчёта  скидки в зависимости от параметра 'discont'
-function diskonter($cost) {
-    if ($diskont = 1) {
+function diskont($cost,$diskont) {
+    if ($diskont == 1) {
+        return '10% скидка: '.(10 / 100 * $cost).'руб.';
+    } elseif ($diskont == 2) {
+        return  '20% скидка: '.(20 / 100 * $cost).'руб.';
+    } else {
+       return 0; 
+    }
+}
+//массив скидок
+for($i=0;$i< count($cost);$i++){
+ $diskon[] = diskont($cost[$i],$diskont[$i]);
+}
+//Функция расчёта цены со скидкой
+function diskontCost($cost,$diskont) {
+    if ($diskont == 1) {
         return $cost - (10 / 100 * $cost);
-    } elseif ($diskont = 2) {
+    } elseif ($diskont == 2) {
         return $cost - (20 / 100 * $cost);
     }
 }
 
 //Функция, выводящая уведомление о недостаточном количестве товара
 function notification($lot, $count) {
-    return $razn = ($lot > $count) ? 'Приносим свои извинения,на складе недостаточно товара , возможно отгрузить только' . $count . ' шт.<br>' : '';
+    return $razn = ($lot > $count) ? 'Приносим свои извинения,на складе недостаточно товара , возможно отгрузить только<br>' . $count . ' шт.<br>' : '';
 }
 
-echo '<h1>КОРЗИНА ПОКУПАТЕЛЯ</h1>';
-echo '<h3>Скидки</h3>';
+//вывод цены в зависимости от скидки
 
-
-//вывод скидки
 for ($i = 0; $i < count($diskont); $i++) {
     switch ($diskont[$i]) {
         case 2:
-            echo 'Ваша цена на ' . $ar[$i] . ' с 20% скидкой составила:' . $cost[$i] = diskonter($cost[$i]) . ' руб.<br>';
+            $cost[$i] = diskontCost($cost[$i],$diskont[$i]);
             break;
         case 1:
-            echo 'Ваша цена на ' . $ar[$i] . ' с 10% скидкой составила:' . $cost[$i] = diskonter($cost[$i]) . ' руб.<br>';
+             $cost[$i] = diskontCost($cost[$i],$diskont[$i]);
             break;
 
         default:
-            echo 'Скидки на ' . $ar[$i] . ' нет<br>';
+            
             break;
     }
 }
 
 
-echo 'Если количество велосипедов равно или больше 3 шт. , вы получаете '
- . 'дополнительно скидку на каждый велосипед 30%<br>'
- . 'Ваша скидка составила: ' . diskontThirty($lots[2], $cost[2]) . 'руб.<br>';
-echo '<h3>В корзину добавлено:</h3>';
-$cost[2] = diskontLot($lots[2], $cost[2], diskontThirty($lots[2], $cost[2]));
+$cost[2] = diskontLot($lots[2], $cost[2], diskontThirty($lots[2], $cost[2]));//ценв на велосипед с 30% скидкой
 
-$sum = array(); //суммы к оплате за позицию товара
+//суммы к оплате за позицию товара
 for ($i = 0; $i < count($count); $i++) {
     if ($lot[$i] > $count[$i]) {
         $sum[] = $count[$i] * $cost[$i];
@@ -146,12 +143,6 @@ for ($i = 0; $i < count($count); $i++) {
     }
 }
 
-for ($i = 0; $i < count($ar); $i++) {
-    echo $ar[$i] . $lot[$i] . ' шт. '
-    . ' по цене ' . $cost[$i] . 'p/шт.<br> '
-    . 'Остаток на складе: ' . $count[$i] . ' шт.<br>' . notification($lot[$i], $count[$i]) .
-    'Сумма по позиции: ' . $sum[$i] . 'руб.<br><br>';
-}
 
 $sumAr = array(); //массив артиклей положенных в корзину
 for ($i = 0; $i < count($ar); $i++) {
@@ -162,10 +153,59 @@ for ($i = 0; $i < count($ar); $i++) {
         unset($sumAr[$i]);
     }
 }
-//print_r($sumAr);
 
-echo '<h2>Итого:</h2>';
-echo 'Наименований товаров заказано: ' . count($sumAr) . ';<br>'
- . 'Количество единиц: ' . array_sum($lots) . ' шт.<br>'
- . 'Общая сумма заказа: ' . array_sum($sum) . 'руб.<br>';
+
+//////////////////////////////////////////////////////////////////
+
+
+echo '<h1>КОРЗИНА ПОКУПАТЕЛЯ</h1>';
+
+echo "<h3>Cводная таблица корзины покупателя</h3>";
+$n=1; 
+echo '<table style="border:1px solid;">
+      <tr style="border:1px solid;">
+        <td style="width:60px;" align="center">№ п/п</td>
+        <td style="width:90px;" align="center">Наименование товара</td>
+        <td style="width:100px;" align="center"> Количество единиц заказано </td>
+        <td style="width:100px;" align="center"> Остаток на складе </td>
+        <td style="width:80px;" align="center"> Цена </td>
+        <td style="width:140px;" align="center"> Нотификация </td>
+        <td style="width:170px;" align="center"> Скидка </td>
+        <td style="width:100px;" align="center"> Дополнительная скидка </td>
+        <td style="width:150px;" align="center"> Сумма </td>
+      </tr>';
+for ($i = 0; $i < count($ar); $i++) {
+  echo '<tr style="border:1px solid;">
+        <td style="width:60px;border:1px solid;" align="center">'.$n++.'</td>
+        <td style="width:90px;border:1px solid;" align="center">'.$ar[$i].'</td>
+        <td style="width:100px;border:1px solid; padding-left:45px;">'.$lot[$i].' шт.</td>
+        <td style="width:100px;border:1px solid;" align="center"> '.$count[$i].' шт. </td>
+        <td style="width:80px;border:1px solid; " align="center" >'. $cost[$i] .' руб.</td>
+        <td style="width:140px;border:1px solid;" align="center">'. notification($lot[$i], $count[$i]).'</td>
+        <td style="width:170px;border:1px solid;" align="center">'. $diskon[$i] .'</td>
+        <td style="width:100px;border:1px solid;" align="center">'.discontBike($ar[$i]).'</td>
+        <td style="width:150px;border:1px solid;" align="center">'.$sum[$i].'руб.</td>
+        </tr>';
+
+ }
+ echo  ' <tr>
+        <td style="width:60px;" align="center"><h3>'.''.'</h3></td>
+        <td style="width:90px;" align="center">'.''.'</td>
+        <td style="width:100px;" align="center"><h4>Наименованиий товаров заказано</h4></td>
+        <td style="width:100px;" align="center">'.''.'</td>
+        <td style="width:80px;" align="center">'.''.'</td>
+        <td style="width:140px;" align="center"><h4>Общее количество единиц товара</h4> </td>
+        <td style="width:170px;" align="center">'.''.'</td>
+        <td style="width:100px;" align="center">'.''.'</td>
+        <td style="width:150px;" align="center"><h4>Общая сумма заказа </h4></td></tr>';
+ echo  ' <tr>
+        <td style="width:60px;" align="center"><h3>Итого:</h3></td>
+        <td style="width:90px;" align="center">'.''.'</td>
+        <td style="width:100px;" align="center"><h4>' . count($sumAr) . '</h4></td>
+        <td style="width:100px;" align="center">'.''.'</td>
+        <td style="width:80px;" align="center">'.''.'</td>
+        <td style="width:140px;" align="center"><h4>' . array_sum($lots) . ' шт.</h4> </td>
+        <td style="width:170px;" align="center">'.''.'</td>
+        <td style="width:100px;" align="center">'.''.'</td>
+        <td style="width:150px;" align="center"><h4>' . array_sum($sum) . 'руб.</h4></td></tr></table>';
 ?>
