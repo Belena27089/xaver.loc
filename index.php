@@ -70,21 +70,38 @@ for ($i = 0; $i < count($count); $i++) {
 }
 
 
-//Расчёт дополнительной 30% скидки на велосипеды при покупке от 3 шт
-If ($lot[2] >= 3) {
-    $diskontBike = 30 / 100 * $cost[2];
-    $cost[2] = $cost[2] - $diskontBike . '<br>';
-} else {
-    $diskontBike = 0;
-    $cost[2];
+//расчёт дополнительной 30% скидки на велосипеды при покупке от 3 шт
+
+$think = 3; //количество шт. товара задающее скидку
+//функция рвсчёта 30% скидки в зависимости от количества товара
+
+function diskontThirty($lots, $cost) {
+    global $think;
+    If ($lots >= $think) {
+        return $diskontThirty = 30 / 100 * $cost;
+    } else {
+        return $diskontThirty = 0;
+    }
 }
 
-//Функция расчёта  скидки 
+//функция расчёта цены с 30% скидкой от 3 шт
+function diskontLot($lots, $cost, $diskontThirty) {
+    global $think;
+    If ($lots >= $think) {
+
+        return $cost = $cost - $diskontThirty . '<br>';
+    } else {
+
+        return $cost;
+    }
+}
+
+//Функция расчёта  скидки в зависимости от параметра 'discont'
 function diskonter($cost) {
-    if ($diskont = 1){
+    if ($diskont = 1) {
         return $cost - (10 / 100 * $cost);
-    } elseif($diskont = 2) {
-        return $cost - (20 / 100 * $cost);   
+    } elseif ($diskont = 2) {
+        return $cost - (20 / 100 * $cost);
     }
 }
 
@@ -116,9 +133,9 @@ for ($i = 0; $i < count($diskont); $i++) {
 
 echo 'Если количество велосипедов равно или больше 3 шт. , вы получаете '
  . 'дополнительно скидку на каждый велосипед 30%<br>'
- . 'Ваша скидка составила: ' . $diskontBike . 'руб.<br>';
+ . 'Ваша скидка составила: ' . diskontThirty($lots[2], $cost[2]) . 'руб.<br>';
 echo '<h3>В корзину добавлено:</h3>';
-
+$cost[2] = diskontLot($lots[2], $cost[2], diskontThirty($lots[2], $cost[2]));
 
 $sum = array(); //суммы к оплате за позицию товара
 for ($i = 0; $i < count($count); $i++) {
