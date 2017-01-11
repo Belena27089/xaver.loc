@@ -37,7 +37,7 @@ function show_list($news) {
 
     for ($i = 0; $i < count($news); $i++) {
         echo '<li>';
-        echo '<a href="/index.php?id=' . ($i + 1) . '">';
+        echo '<a href="/dz5.php?id=' . ($i + 1) . '">';
         echo $news[$i];
         echo '</a>';
         echo '</li>';
@@ -54,7 +54,7 @@ function show_item($news, $id) {
     echo "<title>Новость #$id</title>";
     echo '</head>';
     echo '<body>';
-    echo '<a href="index.php">Вернуться к списку новостей</a><br>';
+    echo '<a href="dz5.php">Вернуться к списку новостей</a><br>';
     echo '<b>';
     echo $news[$id - 1].'<br>';
     echo '</b>';
@@ -94,7 +94,7 @@ if (isset($_POST['id'])) {
 
 echo '</div>
 <h3>Найти новость</h3>
-<form method="POST">
+<form action="dz5.php" method="POST">
     Введите ID: <input type="text" name="id" /><br><br>
     <br>
     <input type="submit" value="Отправить">
