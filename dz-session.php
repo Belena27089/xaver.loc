@@ -8,22 +8,11 @@ session_start();
 echo "Имя сессии: " . session_name() . " Идентификатор сессии: " . session_id();
 
 if (isset($_POST['go'])) {
-    $_SESSION['nick'][] = array(
-        'seller_name' => $_POST['seller_name'], 'email' => $_POST['email'],
-        'phone' => $_POST['phone'], 'location_id' => $_POST['location_id'],
-        'metro_id' => $_POST['metro_id'], 'road_id' => $_POST['road_id'], 'category_id' => $_POST['category_id'],
-        'title' => $_POST['title'], 'description' => $_POST['description'], 'price' => $_POST['price'], 'image' => $_POST['image'],
-        'go' => $_POST['go']); //берем с POST массива значение отправленное с формы, присваиваем 
+    $_SESSION['nick'][] = $_POST;  //берем с POST массива значение отправленное с формы, присваиваем 
 
     //redirect на эту же страницу, преодолеваем проблему повторной отправки формы POST
     header("Location: index.php");
 }
-
-echo "<pre>";
-print_r($_SESSION);
-//print_r($_GET);
-//print_r($_SESSION['ads']);
-echo "</pre>";
 
 echo '<!DOCTYPE html>
 <html lang="en">
@@ -293,8 +282,7 @@ if ($_GET ['action']) {
         case 'delete':
 
             $id = $_GET['id'];
-            if (isset($_SESSION['nick'][$id])) {
-                session_destroy();
+            if (isset($_SESSION['nick'][$id])) {                
                 unset($_SESSION['nick'][$id]);
             }
             break;
