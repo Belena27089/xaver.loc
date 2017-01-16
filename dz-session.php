@@ -315,6 +315,8 @@ if ($_GET ['action']) {
             $id = $_GET['id'];
             if (isset($_SESSION['nick'][$id])) {
                 unset($_SESSION['nick'][$id]);
+            }else {
+                show_form();
             }
             break;
         case 'show':
