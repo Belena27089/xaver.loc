@@ -74,10 +74,6 @@ if (isset($_GET['id'])) {
     show_item($news, $_GET['id']);
 }
 
-
-echo '</head>
-<body>
-<div>';
 if ($_POST['id'] > count($news)) {
     header("HTTP/1.0 404 Not Found");
     echo '<h1 style="color:red;">Страница не найдена 404</h1><br>';
@@ -92,15 +88,14 @@ if (isset($_POST['id'])) {
     show_list($news);
 }
 
-echo '</div>
+echo '
 <h3>Найти новость</h3>
 <form action="dz5.php" method="POST">
     Введите ID: <input type="text" name="id" /><br><br>
     <br>
     <input type="submit" value="Отправить">
 </form>
-</body>
-</html>';
+';
 
 print_r($_POST);
 ?>
