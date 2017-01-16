@@ -34,7 +34,15 @@ function show_form() {
 </head>
 <body>    
 
-<form action="index.php" method="post"> 
+<form action="index.php" method="post">
+
+<div class="form-row-indented">
+     <label class="form-label-radio">
+        <input type="radio" checked="" value="1" name="private">Частное лицо
+     </label>
+    <label class="form-label-radio">
+        <input type="radio" value="0" name="private">Компания</label>
+</div><br>
 
 <div class="form-row">
     <label for="fld_seller_name" class="form-label"><b id="your-name">Ваше Имя</b></label>
@@ -204,7 +212,23 @@ function show_advertisement($id) {
 </head>
 <body>    
 
-<form action="index.php" method="get"> 
+<form action="index.php" method="get">
+
+<div class="form-row-indented">
+     <label class="form-label-radio">';
+    if ($_SESSION['nick'][$_GET['id']]['private'] == 1) {
+        echo '<input type="radio" checked="" value="' . $_SESSION['nick'][$_GET['id']]['private'] . '" name="private">Частное лицо</label>
+        <label class="form-label-radio">
+        <input type="radio" value="0" name="private">Компания</label>';
+    }
+    if ($_SESSION['nick'][$_GET['id']]['private'] == 0) {
+        echo '<label class="form-label-radio">
+        <input type="radio" value="1" name="private">Частное лицо</label>
+        <input type="radio" checked="" value="' . $_SESSION['nick'][$_GET['id']]['private'] . '" name="private">Компания</label>';
+    }
+
+    echo '</div><br>
+
 
 <div class="form-row">
     <label for="fld_seller_name" class="form-label"><b id="your-name">Ваше Имя</b></label>
