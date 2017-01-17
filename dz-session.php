@@ -60,19 +60,23 @@ function show_road_block($road = '') {
 function show_category_block($type = '') {
     global $categories;
     $category = $_SESSION['nick'][$_GET['id']]['category_id'];
+
     echo' <select title="Выберите категорию" name="category_id" id="fld_category_id" class="form-input-select"> 
         <option value="">-- Выберите категорию --</option>';
     foreach ($categories as $optgroup => $cat) {
         echo '<optgroup label="' . $optgroup . '">';
         foreach ($cat as $namber => $type) {
-            $selected = ($number = $category) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
-            echo '<option' . $selected . ' value="' . $namber . '">' . $type . '</option>';
+            if ($namber == $category) {
+                echo '<option value="' . $namber . '" selected="selected">' . $type . '</option>';
+            } else {
+                echo '<option value="' . $namber . '">' . $type . '</option>';
+            }
         }
     }
-    echo '</optgroup></select>';
+    echo '</optgroup>';
 }
 
-function show_form() {   
+function show_form() {
 
     echo '<!DOCTYPE html>
 <html lang="en">
@@ -139,6 +143,7 @@ function show_form() {
     <label for="fld_category_id" class="form-label">Категория</label>';
 
     show_category_block();
+    echo '</select>';
     echo '</div><br>
 
    <!--  -->
@@ -193,7 +198,8 @@ function show_form() {
     echo '</table>';
 }
 
-function show_advertisement($id) {    
+function show_advertisement($id) {
+
     echo '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -255,18 +261,11 @@ function show_advertisement($id) {
     echo '</div><br> 
 </div><br>';
 
-
     echo '<div class="form-row"> 
-   <label for="fld_category_id" class="form-label">Категория</label>';
-    global $categories;
-
-    echo' <select title="Выберите категорию" name="category_id" id="fld_category_id" class="form-input-select"> 
-
-           <option value="">' . $categories[array_keys($categories)[0]][$_SESSION['nick'][$_GET['id']]['category_id']]
-    . $categories[array_keys($categories)[1]][$_SESSION['nick'][$_GET['id']]['category_id']] . ' </option>';
-
-    echo '</select>
-</div><br>';
+    <label for="fld_category_id" class="form-label">Категория</label>';
+    show_category_block();
+    echo '</select>';
+    echo '</div><br>';
 
     echo '<div id="f_title" class="form-row f_title"> 
     <label for="fld_title" class="form-label">Название объявления</label> 
@@ -316,6 +315,7 @@ if ($_GET ['action']) {
 } else {
     show_form();
 }
+
 
 //unset($_SESSION['nick']);  
 ?>
