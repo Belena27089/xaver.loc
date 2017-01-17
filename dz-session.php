@@ -7,8 +7,7 @@ session_start();
 echo "Имя сессии: " . session_name() . " Идентификатор сессии: " . session_id();
 
 if (isset($_POST['go'])) {
-    $_SESSION['nick'][] = $_POST;
- //берем с POST массива значение отправленное с формы, присваиваем 
+    $_SESSION['nick'][] = $_POST; //берем с POST массива значение отправленное с формы, присваиваем 
     //redirect на эту же страницу, преодолеваем проблему повторной отправки формы POST
     header("Location: index.php");
 }
@@ -19,7 +18,60 @@ $metros = array('2028' => 'Берёзовая роща', '2018' => 'Гагари
     '2025' => 'Площадь Гарина-Михайловского', '2020' => 'Площадь Ленина', '2024' => 'Площадь Маркса', '2022' => 'Речной вокзал', '2026' => 'Сибирская', '2023' => 'Студенческая');
 $roads = array('56' => 'Бердское шоссе', '57' => 'Гусинобродское шоссе', '53' => 'Дачное шоссе', '55' => 'Краснояровское шоссе', '54' => 'Мочищенское шоссе', '52' => 'Ордынское шоссе', '58' => 'Советское шоссе');
 $categories = array('Транспорт' => array('9' => 'Автомобили с пробегом', '109' => 'Новые автомобили', '14' => 'Мотоциклы и мототехника', '81' => 'Грузовики и спецтехника', '11' => 'Водный транспорт', '10' => 'Запчасти и аксессуары'), 'Недвижимость' => array('24' => 'Квартиры', '23' => 'Комнаты', '25' => 'Дома,дачи,коттеджи', '26' => 'Земельные участки', '85' => 'Гаражи и машиноместа', '42' => 'Коммерческая недвижимость', '86' => 'Недвижимость за рубежом'));
-//Функция вывода формы
+
+function show_city_block() {
+    global $citys;
+    $gorod = $_SESSION['nick'][$_GET['id']]['location_id'];
+    echo '<option value="">-- Выберите город --</option>
+                <option class="opt-group" disabled="disabled">-- Города --</option>';
+
+    foreach ($citys as $number => $city) {
+        $selected = ($number == $gorod) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
+        echo '<option data-coords=",,"' . $selected . '  value="' . $number . '">' . $city . '</option>';
+    }
+    echo '<option id="select-region" value="0">Выбрать другой...</option>';
+}
+
+function show_metro_block($metro = '') {
+    global $metros;
+    $station = $_SESSION['nick'][$_GET['id']]['metro_id'];
+    echo'<select title="Выберите станцию метро" name="metro_id" id="fld_metro_id" class="form-input-select"> 
+            <option value="">-- Выберите станцию метро --</option>';
+    foreach ($metros as $number => $metro) {
+        $selected = ($number == $station) ? 'selected=""' : ''; //если мы передали в функцию cтанцию который нужно выставить в списке то мы ставим специальную метку в селектор
+        echo '<option ' . $selected . '  value="' . $number . '">' . $metro . '</option>';
+    }
+    echo '</select>';
+}
+
+function show_road_block($road = '') {
+    global $roads;
+    $path = $_SESSION['nick'][$_GET['id']]['road_id'];
+    echo' <select title="Выберите направление" name="road_id" id="fld_road_id" class="form-input-select" style="display: 
+        block;"> 
+            <option value="">-- Выберите направление --</option>';
+    foreach ($roads as $number => $road) {
+        $selected = ($number == $path) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
+        echo '<option ' . $selected . ' value="' . $number . '">' . $road . '</option>';
+    }
+    echo '</select>';
+}
+
+function show_category_block($type = '') {
+    global $categories;
+    $category = $_SESSION['nick'][$_GET['id']]['category_id'];
+    echo' <select title="Выберите категорию" name="category_id" id="fld_category_id" class="form-input-select"> 
+        <option value="">-- Выберите категорию --</option>';
+    foreach ($categories as $optgroup => $cat) {
+        echo '<optgroup label="' . $optgroup . '">';
+        foreach ($cat as $namber => $type) {
+            $selected = ($number = $category) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
+            echo '<option' . $selected . ' value="' . $namber . '">' . $type . '</option>';
+        }
+    }
+    echo '</optgroup></select>';
+}
+
 function show_form() {
     global $citys;
     global $metros;
@@ -64,43 +116,15 @@ function show_form() {
         <input type="text" class="form-input-text" value="" name="phone" id="fld_phone">
 </div><br>';
 
-    function show_city_block($city = '') {
-        global $citys;
-        $gorod = $citys[$_SESSION['nick'][$_GET['id']]['location_id']];
 
-
-        echo '<select title="Выберите Ваш город" name="location_id" id="region" class="form-input-select"> 
-                <option value="">-- Выберите город --</option>
-                <option class="opt-group" disabled="disabled">-- Города --</option>';
-
-
-        foreach ($citys as $number => $city) {
-            $selected = ($number == $gorod) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
-            echo '<option data-coords=",," ' . $selected . ' value="' . $number . '">' . $city . '</option>';
-        }
-
-
-        echo '<option id="select-region" value="0">Выбрать другой...</option>
-        </select>';
-    }
 
     echo '<div id="f_location_id" class="form-row form-row-required"> 
-    <label for="region" class="form-label">Город</label>';
-
+    <label for="region" class="form-label">Город</label>
+          <select title="Выберите Ваш город" name="location_id" id="region" class="form-input-select">';
 
     show_city_block();
 
-    function show_metro_block($metro = '') {
-        global $metros;
-        $station = $_SESSION['nick'][$_GET['id']]['metro_id'];
-        echo'<select title="Выберите станцию метро" name="metro_id" id="fld_metro_id" class="form-input-select"> 
-            <option value="">-- Выберите станцию метро --</option>';
-        foreach ($metros as $number => $metro) {
-            $selected = ($number == $station) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
-            echo '<option ' . $selected . '  value="' . $number . '">' . $metro . '</option>';
-        }
-        echo '</select>';
-    }
+    echo '</select>';
 
     echo '<div id="f_metro_id">';
 
@@ -109,39 +133,11 @@ function show_form() {
     echo '</div><br>     
     </div><br>';
 
-    function show_road_block($road = '') {
-        global $roads;
-        $path = $_SESSION['nick'][$_GET['id']]['road_id'];
-        echo' <select title="Выберите направление" name="road_id" id="fld_road_id" class="form-input-select" style="display: 
-        block;"> 
-            <option value="">-- Выберите направление --</option>';
-        foreach ($roads as $number => $road) {
-            $selected = ($number == $path) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
-            echo '<option ' . $selected . ' value="' . $number . '">' . $road . '</option>';
-        }
-        echo '</select>';
-    }
-
     echo '<div id="f_road_id">';
 
     show_road_block();
     echo '</div><br> 
 </div><br>';
-
-    function show_category_block($type = '') {
-        global $categories;
-        $category = $_SESSION['nick'][$_GET['id']]['category_id'];
-        echo' <select title="Выберите категорию" name="category_id" id="fld_category_id" class="form-input-select"> 
-        <option value="">-- Выберите категорию --</option>';
-        foreach ($categories as $optgroup => $cat) {
-            echo '<optgroup label="' . $optgroup . '">';
-            foreach ($cat as $namber => $type) {
-                $selected = ($number = $category) ? 'selected=""' : ''; //если мы передали в функцию город который нужно выставить в списке то мы ставим специальную метку в селектор
-                echo '<option' . $selected . ' value="' . $namber . '">' . $type . '</option>';
-            }
-        }
-        echo '</optgroup></select>';
-    }
 
     echo '<div class="form-row"> 
     <label for="fld_category_id" class="form-label">Категория</label>';
@@ -200,8 +196,12 @@ function show_form() {
     }
     echo '</table>';
 }
-//Функция вывода объявления
+
 function show_advertisement($id) {
+    global $citys;
+    global $metros;
+    global $roads;
+    global $categories;
     echo '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -211,7 +211,6 @@ function show_advertisement($id) {
 <body>    
 
 <form action="index.php" method="get">
-
 <div class="form-row-indented">
      <label class="form-label-radio">';
     if ($_SESSION['nick'][$_GET['id']]['private'] == 1) {
@@ -226,7 +225,6 @@ function show_advertisement($id) {
     }
 
     echo '</div><br>
-
 
 <div class="form-row">
     <label for="fld_seller_name" class="form-label"><b id="your-name">Ваше Имя</b></label>
@@ -246,42 +244,39 @@ function show_advertisement($id) {
 <div class="form-row"> 
     <label id="fld_phone_label" for="fld_phone" class="form-label">Номер телефона</label> 
         <input type="text" class="form-input-text" value="' . $_SESSION['nick'][$_GET['id']]['phone'] . '" name="phone" id="fld_phone">
-</div><br>
+</div><br>';
+    echo '<select title="Выберите Ваш город" name="location_id" id="region" class="form-input-select">';
 
-<div id="f_location_id" class="form-row form-row-required"> 
-    <label for="region" class="form-label">Город</label>
- <select title="Выберите Ваш город" name="location_id" id="region" class="form-input-select">';
-    global $citys;
-    echo '<option data-coords=",,"  value="">' . $citys[$_SESSION['nick'][$_GET['id']]['location_id']] . '</option>    
-      </select>
-<div id="f_metro_id">
- <select title="Выберите станцию метро" name="metro_id" id="fld_metro_id" class="form-input-select">';
-    global $metros;
-    echo '<option   value="">' . $metros[$_SESSION['nick'][$_GET['id']]['metro_id']] . '</option>
-</select></div><br>     
-    </div><br>
+    show_city_block();
 
-<div id="f_road_id">';
-    global $roads;
-    echo' <select title="Выберите направление" name="road_id" id="fld_road_id" class="form-input-select" style="display: 
-        block;">    
-        <option  value="">' . $roads[$_SESSION['nick'][$_GET['id']]['road_id']] . '</option>
-</select>
-</div><br> 
+    echo '</select>';
+    echo '<div id="f_metro_id">';
+
+    show_metro_block();
+
+    echo '</div><br>     
+    </div><br>';
+
+    echo '<div id="f_road_id">';
+
+    show_road_block();
+    echo '</div><br> 
+</div><br>';
 
 
-<div class="form-row"> 
-    <label for="fld_category_id" class="form-label">Категория</label>';
+    echo '<div class="form-row"> 
+   <label for="fld_category_id" class="form-label">Категория</label>';
     global $categories;
 
     echo' <select title="Выберите категорию" name="category_id" id="fld_category_id" class="form-input-select"> 
 
            <option value="">' . $categories[array_keys($categories)[0]][$_SESSION['nick'][$_GET['id']]['category_id']]
-    . $categories[array_keys($categories)[1]][$_SESSION['nick'][$_GET['id']]['category_id']] . ' </option>   
-    </select>
-</div><br>
-   
-<div id="f_title" class="form-row f_title"> 
+    . $categories[array_keys($categories)[1]][$_SESSION['nick'][$_GET['id']]['category_id']] . ' </option>';
+
+    echo '</select>
+</div><br>';
+
+    echo '<div id="f_title" class="form-row f_title"> 
     <label for="fld_title" class="form-label">Название объявления</label> 
         <input type="text" maxlength="50" class="form-input-text-long" value="' . $_SESSION['nick'][$_GET['id']]['title'] . '" name="title" id="fld_title"> 
 </div><br>
@@ -315,7 +310,7 @@ if ($_GET ['action']) {
             $id = $_GET['id'];
             if (isset($_SESSION['nick'][$id])) {
                 unset($_SESSION['nick'][$id]);
-            }else {
+            } else {
                 show_form();
             }
             break;
@@ -326,10 +321,9 @@ if ($_GET ['action']) {
             }
             break;
     }
-}else {
+} else {
     show_form();
 }
-
 
 //unset($_SESSION['nick']);  
 ?>
