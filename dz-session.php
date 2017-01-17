@@ -72,11 +72,7 @@ function show_category_block($type = '') {
     echo '</optgroup></select>';
 }
 
-function show_form() {
-    global $citys;
-    global $metros;
-    global $roads;
-    global $categories;
+function show_form() {   
 
     echo '<!DOCTYPE html>
 <html lang="en">
@@ -197,11 +193,7 @@ function show_form() {
     echo '</table>';
 }
 
-function show_advertisement($id) {
-    global $citys;
-    global $metros;
-    global $roads;
-    global $categories;
+function show_advertisement($id) {    
     echo '<!DOCTYPE html>
 <html lang="en">
 <head>
